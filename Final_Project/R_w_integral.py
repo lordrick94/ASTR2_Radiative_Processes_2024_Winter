@@ -47,9 +47,7 @@ if __name__ == '__main__':
     # Time the execution of the script
     import time
     start_time = time.time()
-    print('Start time: ', start_time)
     print('Running the script...')
     main()  
-    print('Elapsed time: ', time.time() - start_time)
-    print('End time: ', time.time())
+    print('Elapsed time: ', time.time() - start_time, ' seconds')
     print('Done!')
