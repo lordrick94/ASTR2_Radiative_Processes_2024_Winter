@@ -16,7 +16,7 @@ def main():
         w_lower = np.min(np.asarray([np.abs(w_1), np.abs(w_prime_1)]))
         w_upper = np.max(np.asarray([np.abs(w_1), np.abs(w_prime_1)]))
         l_lim = 0.5 * np.abs(w_upper - w_lower)
-        int_result, err = quad(r_w_w_prime, l_lim, 100, args=(w_1, w_prime_1))
+        int_result, err = quad(r_w_w_prime, l_lim, np.inf, args=(w_1, w_prime_1))
         return i, j, int_result
 
     w_min = -10.0
