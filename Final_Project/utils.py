@@ -38,7 +38,7 @@ def random_tau(phot_num=0,scat_num=0,seed=101,n=100000):
 
     return tau
 
-def get_tau_int(w,tau_0=10**4):
+def get_tau_h(w,tau_0=10**4/2):
     """
     This function takes the frequency w and the optical depth tau_0 and returns the integrated optical depth tau_int
     """
@@ -148,14 +148,6 @@ def make_rw_table():
     np.savetxt('int_table.txt', result_mesh)
 
 
-def get_tau_to_surface(theta,phi,tau):
-    """
-    This function takes the theta, phi and tau values and returns the tau to the surface
-    """
-    tau_surface = tau/(np.cos(theta)*np.sin(phi))
-    return tau_surface
-
-
 def get_wp_from_random_variate(phot_num=0,scat_num=0,Rint=None,wc=1,seed=103):
     
     if Rint is None:
@@ -244,15 +236,15 @@ def write_results_to_file(phot_num, scat_num, escape_w):
     # Don't forget to close the file when you're done
     outfile.close()
 
-def write_phot_info(phot_num, scat_num, theta,phi,tau):
+def write_phot_info(phot_num, scat_num, theta,phi,tau,del_x):
     # First, create and open the text file for writing. Choose a name: 
-    filename = f'phot_num{phot_num}.csv'
+    filename = f'photons/phot_num{phot_num}.csv'
     
     # Open the file in append mode
     outfile = open(filename, 'a')
 
     # Prepare the data string
-    dataString = f'{phot_num},{scat_num},{theta},{phi},{tau}'
+    dataString = f'{phot_num},{scat_num},{theta},{phi},{tau},{del_x}'
 
     # Write the data string to the file
     outfile.write(dataString + '\n')
