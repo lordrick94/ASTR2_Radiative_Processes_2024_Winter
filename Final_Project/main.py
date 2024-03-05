@@ -21,7 +21,7 @@ def main():
 
     while escaped_photons < ESCAPED_PHOTONS_THRESHOLD:
         scat_num = 0
-        w, x = 0, 0
+        w, x = np.random.choice([2,-2]), 0
         
         # Make output file for each photon
         outfile = open(f'photons/phot_num{phot_num}.csv', 'w')
@@ -33,16 +33,25 @@ def main():
 
         while True:
             for _ in range(MAX_NUM_SCAT):
+                # Get tau_h for the current w
+                tau_h_in = get_tau_h(w)
+                
+                # Get random direction
                 theta, phi = random_theta_phi(phot_num, scat_num)
+                
+                # Get random tau for how far the photon will travel
                 tau = random_tau(0, scat_num)
                 tau_eff = tau * np.sin(theta) * np.cos(phi)
-                tau_h_in = get_tau_h(w)
-                tau_h = tau_h_in / (np.sin(theta) * np.cos(phi))
-                print(f"w = {w}, tau_h = {tau_h}, tau_eff = {tau_eff}")
-
-                del_x = tau_eff / tau_h
-
-                if x + del_x > 1:
+                
+                # Get distance traveled in the x direction
+                del_x = tau_eff / tau_h_in
+                
+                # New posotion of x
+                new_x = x + del_x
+                
+                print(f'New x = {new_x}')
+                
+                if np.abs(x + del_x) > 1:
                     print("Photon has escaped at w =", w)
                     write_results_to_file(phot_num, scat_num, escape_w=w)
                     escaped_photons += 1
@@ -51,8 +60,6 @@ def main():
                     
                     w = np.random.choice([-2, 2])
                     
-                    
-                    
                     break
                 else:
                     
@@ -60,7 +67,7 @@ def main():
                     wp = w
                     w = get_wp_from_random_variate(0, scat_num, wc=wp)
                     print("New w =", w)
-                    x += del_x
+                    x = new_x
                     scat_num += 1
                     print("Scat_num =", scat_num)
                     print()
