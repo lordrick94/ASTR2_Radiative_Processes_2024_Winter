@@ -7,24 +7,25 @@ import scipy.integrate as spi
 
 from IPython import embed
 
-seed = 42
 
-def random_theta_phi(phot_num=0,scat_num=0,seed=100,n=100000):
+def random_theta_phi(phot_num=0, scat_num=0, n=100000):
     """
     Generate random theta and phi values.
     
     Returns:
     tuple: theta and phi values in radians.
     """
-    rng = default_rng((phot_num+1)*seed)
-    eta_1 = rng.uniform(0, 1,n)
-    eta_0 = rng.uniform(0, 1,n)
+    seed = abs(hash((phot_num, scat_num, "theta_phi")))  # Using hash function with unique identifiers
+    print(f'Random Direction: using seed {seed}')
+    rng = default_rng(seed)
+    eta_1 = rng.uniform(0, 1, n)
+    eta_0 = rng.uniform(0, 1, n)
     theta = np.arccos(2 * eta_0[scat_num] - 1)
     phi = 2 * np.pi * eta_1[scat_num]
 
     return theta, phi
 
-def random_tau(phot_num=0,scat_num=0,seed=101,n=100000):
+def random_tau(phot_num=0, scat_num=0, n=100000):
     """
     Generate random optical depth for the particle to move
     
@@ -32,9 +33,11 @@ def random_tau(phot_num=0,scat_num=0,seed=101,n=100000):
         float: optical depth
         
     """
-    rng = default_rng((phot_num+1)*seed)
-    eta_1 = rng.uniform(0, 1,n)
-    tau = -np.log(1-eta_1[scat_num])
+    seed = abs(hash((phot_num, scat_num, "tau")))  # Using hash function with unique identifiers
+    print(f'Random tau: using seed {seed}')
+    rng = default_rng(seed)
+    eta_1 = rng.uniform(0, 1, n)
+    tau = -np.log(1 - eta_1[scat_num])
 
     return tau
 
@@ -148,14 +151,14 @@ def make_rw_table():
     np.savetxt('int_table.txt', result_mesh)
 
 
-def get_wp_from_random_variate(phot_num=0,scat_num=0,Rint=None,wc=1,seed=103):
+def get_wp_from_random_variate(phot_num=0,scat_num=0,Rint=None,wc=1):
     
     if Rint is None:
         Rint = np.loadtxt('Rwwp_cdf.txt')
     
-    #how many random variates?
-
-    rng = default_rng((phot_num+1)*seed)
+    seed = abs(hash((phot_num, scat_num, "wp")))  # Using hash function with unique identifiers
+    print(f'Random w\': using seed {seed}')
+    rng = default_rng(seed)
     n_rand = 100000
 
     #get the xi_p
