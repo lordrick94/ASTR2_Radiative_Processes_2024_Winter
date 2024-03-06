@@ -1,12 +1,14 @@
 import numpy as np
 from utils import random_theta_phi, random_tau, get_tau_h, get_wp_from_random_variate, write_results_to_file
 
+
+
 # Constants
 MAX_NUM_SCAT = 1000000
 ESCAPED_PHOTONS_THRESHOLD = 1000
 
 def main():
-    phot_num = 0
+    phot_num = 1
     escaped_photons = 0
     # Make results file
     filename = 'results.txt'
@@ -19,21 +21,16 @@ def main():
     
 
     while escaped_photons < ESCAPED_PHOTONS_THRESHOLD:
-        scat_num = 0
+        scat_num = 1
         w_min = np.random.uniform(1.5,2.5)
-        w, x = np.random.choice([w_min,-1*w_min]), 0
-        
-        # # Make output file for each photon
-        # outfile = open(f'photons/phot_num{phot_num}.csv', 'w')
-        
-        # # Write the column headers
-        # params = 'phot_num,scat_num,theta,phi,tau,del_x'
-        
-        # outfile.write(params + '\n')
+        w = np.random.choice([w_min,-1*w_min])
+        x = 0
 
         while True:
             for _ in range(MAX_NUM_SCAT):
                 # Get tau_h for the current w
+                print(f'Current w = {w}')
+                print(f'phot_num = {phot_num}, scat_num = {scat_num}')
                 tau_h_in = get_tau_h(w)
                 
                 # Get random direction
@@ -60,7 +57,7 @@ def main():
                     wp = np.random.choice([w_min,-1*w_min])
                     w = get_wp_from_random_variate(phot_num, scat_num, wc=wp)
 
-                elif w_next>10 or w_next<-10:
+                elif w_next>20 or w_next<-20:
                     print("W_next out of bounds, moving to next scatter")
                     scat_num += 1
                     w_min = np.random.uniform(1.5,2.5)

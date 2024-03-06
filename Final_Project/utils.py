@@ -7,6 +7,23 @@ import scipy.integrate as spi
 
 from IPython import embed
 
+def init_w_array(n_rand=100000):
+    #make our array of output wp values
+    wpc = np.zeros(n_rand)
+    w_min  = -20.0
+    w_max  =  20.0
+    wp_min = -30.0
+    wp_max =  30.0
+
+    #how many samples in each direction?
+    n_w  = 2001
+    n_wp = 2001
+
+    #produce arrays of w, w'
+    w = np.linspace(w_min,w_max,n_w)
+    wp = np.linspace(wp_min, wp_max, n_wp)
+    
+    return w, wp, wpc, n_w, n_wp
 
 def random_theta_phi(phot_num=0, scat_num=0, n=100000):
     """
@@ -79,18 +96,7 @@ def get_cdf(R_N):
     This function takes the R_N matrix and returns the CDF of the w' direction
     """
     #what is our range of w,w'?
-    w_min  = -10.0
-    w_max  =  10.0
-    wp_min = -30.0
-    wp_max =  30.0
-
-    #how many samples in each direction?
-    n_w  = 1001
-    n_wp = 1001
-
-    #produce arrays of w, w'
-    w = np.linspace(w_min,w_max,n_w)
-    wp = np.linspace(wp_min, wp_max, n_wp)
+    w, wp, wpc, n_w, n_wp = init_w_array()
 
     Rwwp = R_N
     Rint = np.zeros_like(Rwwp)
@@ -126,15 +132,8 @@ def make_rw_table():
         int_result, err = spi.quad(r_w_w_prime, l_lim, np.inf, args=(w_1, w_prime_1))
         return i, j, int_result
 
-    w_min = -10.0
-    w_max = 10.0
-    wp_min = -30.0
-    wp_max = 30.0
-    n_w = 1001
-    n_wp = 1001
-
-    w = np.linspace(w_min, w_max, n_w)
-    wp = np.linspace(wp_min, wp_max, n_wp)
+    # Make w and w' arrays
+    w, wp, wpc, n_w, n_wp = init_w_array()
     wx, wpy = np.meshgrid(w, wp)
 
     # Prepare for parallel computation
@@ -164,24 +163,9 @@ def get_wp_from_random_variate(phot_num=0,scat_num=0,Rint=None,wc=1):
     #get the xi_p
     xi_p = rng.uniform(0,1,n_rand)
 
-    #make our array of output wp values
-    wpc = np.zeros(n_rand)
-    w_min  = -10.0
-    w_max  =  10.0
-    wp_min = -30.0
-    wp_max =  30.0
-
-    #how many samples in each direction?
-    n_w  = 1001
-    n_wp = 1001
-
-    #produce arrays of w, w'
-    w = np.linspace(w_min,w_max,n_w)
-    wp = np.linspace(wp_min, wp_max, n_wp)
-
-    #begin a loop over the random variates
         
-    #what is our range of w,w'?
+    #Make w and w' arrays
+    w, wp, wpc, n_w, n_wp = init_w_array()
 
     #find the w indices bounding current w
     wi = np.searchsorted(w,wc,side="left")
