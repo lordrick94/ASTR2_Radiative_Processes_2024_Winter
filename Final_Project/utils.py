@@ -8,6 +8,26 @@ import scipy.integrate as spi
 from IPython import embed
 
 
+
+def init_w_array():
+    """
+    This function initializes the w array
+    """
+    w_min  = -20.0
+    w_max  =  20.0
+    wp_min = -30.0
+    wp_max =  30.0
+
+    #how many samples in each direction?
+    n_w  = 1001
+    n_wp = 1001
+
+    #produce arrays of w, w'
+    w = np.linspace(w_min,w_max,n_w)
+    wp = np.linspace(wp_min, wp_max, n_wp)
+
+    return w, wp, n_w, n_wp
+
 def random_theta_phi(phot_num=0, scat_num=0, n=100000):
     """
     Generate random theta and phi values.
@@ -16,7 +36,7 @@ def random_theta_phi(phot_num=0, scat_num=0, n=100000):
     tuple: theta and phi values in radians.
     """
     seed = abs(hash((phot_num, scat_num, "theta_phi")))  # Using hash function with unique identifiers
-    print(f'Random Direction: using seed {seed}')
+    #print(f'Random Direction: using seed {seed}')
     rng = default_rng(seed)
     eta_1 = rng.uniform(0, 1, n)
     eta_0 = rng.uniform(0, 1, n)
@@ -34,7 +54,7 @@ def random_tau(phot_num=0, scat_num=0, n=100000):
         
     """
     seed = abs(hash((phot_num, scat_num, "tau")))  # Using hash function with unique identifiers
-    print(f'Random tau: using seed {seed}')
+    #print(f'Random tau: using seed {seed}')
     rng = default_rng(seed)
     eta_1 = rng.uniform(0, 1, n)
     tau = -np.log(1 - eta_1[scat_num])
@@ -45,7 +65,7 @@ def get_tau_h(w,tau_0=(10**4)/2):
     """
     This function takes the frequency w and the optical depth tau_0 and returns the integrated optical depth tau_int
     """
-    a = 4.7e-4
+    a = 4.7e-4 * (10/10**4)**(-0.5)
 
     def get_H_w_a(w,a):
         H_0 = np.exp(-w**2)
@@ -56,6 +76,8 @@ def get_tau_h(w,tau_0=(10**4)/2):
 
     if w == 0:
         w = 10**-9
+
+    
     tau_int = tau_0 * get_H_w_a(w,a)/get_H_w_a(w_l,a)
 
     return tau_int
@@ -78,19 +100,7 @@ def get_cdf(R_N):
     """
     This function takes the R_N matrix and returns the CDF of the w' direction
     """
-    #what is our range of w,w'?
-    w_min  = -10.0
-    w_max  =  10.0
-    wp_min = -30.0
-    wp_max =  30.0
-
-    #how many samples in each direction?
-    n_w  = 1001
-    n_wp = 1001
-
-    #produce arrays of w, w'
-    w = np.linspace(w_min,w_max,n_w)
-    wp = np.linspace(wp_min, wp_max, n_wp)
+    w, wp, n_w, n_wp = init_w_array()
 
     Rwwp = R_N
     Rint = np.zeros_like(Rwwp)
@@ -100,7 +110,7 @@ def get_cdf(R_N):
             Rint[j,i] = 0.5*(Rwwp[j-1,i] + Rwwp[j,i])*(wp[j]-wp[j-1]) + Rint[j-1,i] 
 
     # Save cdf
-    np.savetxt('../Rwwp_cdf.txt',Rint)
+    np.savetxt('Rwwp_cdf.txt',Rint)
 
     print('CDF of w\' direction is saved as Rwwp_cdf.txt')
 
@@ -126,15 +136,7 @@ def make_rw_table():
         int_result, err = spi.quad(r_w_w_prime, l_lim, np.inf, args=(w_1, w_prime_1))
         return i, j, int_result
 
-    w_min = -10.0
-    w_max = 10.0
-    wp_min = -30.0
-    wp_max = 30.0
-    n_w = 1001
-    n_wp = 1001
-
-    w = np.linspace(w_min, w_max, n_w)
-    wp = np.linspace(wp_min, wp_max, n_wp)
+    w, wp, n_w, n_wp = init_w_array()
     wx, wpy = np.meshgrid(w, wp)
 
     # Prepare for parallel computation
@@ -157,7 +159,7 @@ def get_wp_from_random_variate(phot_num=0,scat_num=0,Rint=None,wc=1):
         Rint = np.loadtxt('Rwwp_cdf.txt')
     
     seed = abs(hash((phot_num, scat_num, "wp")))  # Using hash function with unique identifiers
-    print(f'Random w\': using seed {seed}')
+    #print(f'Random w\': using seed {seed}')
     rng = default_rng(seed)
     n_rand = 100000
 
@@ -165,23 +167,7 @@ def get_wp_from_random_variate(phot_num=0,scat_num=0,Rint=None,wc=1):
     xi_p = rng.uniform(0,1,n_rand)
 
     #make our array of output wp values
-    wpc = np.zeros(n_rand)
-    w_min  = -10.0
-    w_max  =  10.0
-    wp_min = -30.0
-    wp_max =  30.0
-
-    #how many samples in each direction?
-    n_w  = 1001
-    n_wp = 1001
-
-    #produce arrays of w, w'
-    w = np.linspace(w_min,w_max,n_w)
-    wp = np.linspace(wp_min, wp_max, n_wp)
-
-    #begin a loop over the random variates
-        
-    #what is our range of w,w'?
+    w, wp, n_w, n_wp = init_w_array()
 
     #find the w indices bounding current w
     wi = np.searchsorted(w,wc,side="left")
@@ -207,7 +193,7 @@ def get_wp_from_random_variate(phot_num=0,scat_num=0,Rint=None,wc=1):
         j = ja
         
     jp1 = j+1
-        
+    #embed()
     #define t, z0, z1, z2, z3, and z
     t = (wc - w[i])/(w[ip1]-w[i])
     z0 = Rint[j,i]

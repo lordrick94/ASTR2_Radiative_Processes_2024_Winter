@@ -22,18 +22,8 @@ def main():
 
     while escaped_photons < ESCAPED_PHOTONS_THRESHOLD:
         scat_num = 0
-        seed = 123 + phot_num
-        rng = default_rng(seed)
-        w_min = rng.uniform(2,2.5)
-        w, x = rng.choice([w_min,-1*w_min]), 0
+        w, x = 0, 0
         
-        # # Make output file for each photon
-        # outfile = open(f'photons/phot_num{phot_num}.csv', 'w')
-        
-        # # Write the column headers
-        # params = 'phot_num,scat_num,theta,phi,tau,del_x'
-        
-        # outfile.write(params + '\n')
 
         while True:
             for _ in range(MAX_NUM_SCAT):
@@ -62,9 +52,8 @@ def main():
                     print("Yaaay!!!!Photon has escaped at w =", w,"\n")
                     write_results_to_file(phot_num, scat_num, escape_w=w)
                     escaped_photons += 1
-                    
-                    # Choose randomly one of these two values [-2,2]
-                    w = np.random.choice([w_min,-1*w_min])
+
+                    w = 0
                     
                     scat_num = 0
                     
@@ -74,13 +63,9 @@ def main():
                     w = w_next
                     print("New w =", w)
                     
-                    if w > 30 or w < -30:
-                        print("W out of bounds, moving to next photon")
-                        break
-                    else:
-                        x = new_x
-                        scat_num += 1
-                        print("Scat_num =", scat_num)
+                    x = new_x
+                    scat_num += 1
+                    print("Scat_num =", scat_num)
 
             if escaped_photons >= ESCAPED_PHOTONS_THRESHOLD:
                 break

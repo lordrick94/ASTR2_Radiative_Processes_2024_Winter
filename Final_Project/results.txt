@@ -1,1 +1,1 @@
-phot_num,scat_num,escape_w
+0,298,4.238239899238445
