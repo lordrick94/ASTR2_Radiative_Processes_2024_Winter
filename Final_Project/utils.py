@@ -41,7 +41,7 @@ def random_tau(phot_num=0, scat_num=0, n=100000):
 
     return tau
 
-def get_tau_h(w,tau_0=10**4/2):
+def get_tau_h(w,tau_0=(10**4)/2):
     """
     This function takes the frequency w and the optical depth tau_0 and returns the integrated optical depth tau_int
     """
@@ -216,7 +216,7 @@ def get_wp_from_random_variate(phot_num=0,scat_num=0,Rint=None,wc=1):
     z3 = Rint[jp1,ip1]
     
     #find u
-    u = (xi_p[20] - z2*t - z0*(1.-t))/((z1-z0)*(1.-t) + (z3-z2)*t)
+    u = (xi_p[scat_num] - z2*t - z0*(1.-t))/((z1-z0)*(1.-t) + (z3-z2)*t)
     
     #get wp
     wpc = u*(wp[jp1] - wp[j]) + wp[j]

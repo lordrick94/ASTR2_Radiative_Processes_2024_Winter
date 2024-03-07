@@ -53,21 +53,21 @@ def main():
                 
                 print(f'New x = {new_x}')
                 
-                if np.isnan(new_x):
-                    print("NaN encountered, moving to next scatter")
-                    scat_num += 1
-                    w_min = np.random.uniform(1.5,2.5)
-                    wp = np.random.choice([w_min,-1*w_min])
-                    w = get_wp_from_random_variate(phot_num, scat_num, wc=wp)
+                # if np.isnan(new_x):
+                #     print("NaN encountered, moving to next scatter")
+                #     scat_num += 1
+                #     w_min = np.random.uniform(1.5,2.5)
+                #     wp = np.random.choice([w_min,-1*w_min])
+                #     w = get_wp_from_random_variate(phot_num, scat_num, wc=wp)
 
-                elif w_next>10 or w_next<-10:
-                    print("W_next out of bounds, moving to next scatter")
-                    scat_num += 1
-                    w_min = np.random.uniform(1.5,2.5)
-                    wp = np.random.choice([w_min,-1*w_min])
-                    w = get_wp_from_random_variate(phot_num, scat_num, wc=wp)
+                # elif w_next>10 or w_next<-10:
+                #     print("W_next out of bounds, moving to next scatter")
+                #     scat_num += 1
+                #     w_min = np.random.uniform(1.5,2.5)
+                #     wp = np.random.choice([w_min,-1*w_min])
+                #     w = get_wp_from_random_variate(phot_num, scat_num, wc=wp)
                     
-                elif np.abs(new_x) > 1:
+                if np.abs(new_x) > 1:
                     print("Yaaay!!!!Photon has escaped at w =", w,"\n")
                     write_results_to_file(phot_num, scat_num, escape_w=w)
                     escaped_photons += 1
