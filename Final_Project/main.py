@@ -1,5 +1,7 @@
 import numpy as np
 from utils import random_theta_phi, random_tau, get_tau_h, get_wp_from_random_variate, write_results_to_file
+from numpy.random import default_rng 
+
 
 # Constants
 MAX_NUM_SCAT = 1000000
@@ -20,8 +22,10 @@ def main():
 
     while escaped_photons < ESCAPED_PHOTONS_THRESHOLD:
         scat_num = 0
-        w_min = np.random.uniform(1.5,2.5)
-        w, x = np.random.choice([w_min,-1*w_min]), 0
+        seed = 123 + phot_num
+        rng = default_rng(seed)
+        w_min = rng.uniform(2,2.5)
+        w, x = rng.choice([w_min,-1*w_min]), 0
         
         # # Make output file for each photon
         # outfile = open(f'photons/phot_num{phot_num}.csv', 'w')
@@ -53,19 +57,6 @@ def main():
                 
                 print(f'New x = {new_x}')
                 
-                # if np.isnan(new_x):
-                #     print("NaN encountered, moving to next scatter")
-                #     scat_num += 1
-                #     w_min = np.random.uniform(1.5,2.5)
-                #     wp = np.random.choice([w_min,-1*w_min])
-                #     w = get_wp_from_random_variate(phot_num, scat_num, wc=wp)
-
-                # elif w_next>10 or w_next<-10:
-                #     print("W_next out of bounds, moving to next scatter")
-                #     scat_num += 1
-                #     w_min = np.random.uniform(1.5,2.5)
-                #     wp = np.random.choice([w_min,-1*w_min])
-                #     w = get_wp_from_random_variate(phot_num, scat_num, wc=wp)
                     
                 if np.abs(new_x) > 1:
                     print("Yaaay!!!!Photon has escaped at w =", w,"\n")
